@@ -1,0 +1,95 @@
+/******************************************************************************
+
+Write a program to implement an address book with options given below: a) Create
+ address book. b) View address book. c) Insert a record. d) Delete a record. e) Modify a
+ record. f) Exit
+
+*******************************************************************************/
+#!/bin/bash
+# Address book file
+address_book="address.txt"
+
+# Function to create an address book
+create_address_book() {
+    if [ -e "$address_book" ]; then
+        echo "Address book already exists."
+    else
+        touch "$address_book"
+        echo "Address book created successfully."
+    fi
+}
+
+# Function to view the address book
+view_address_book() {
+    if [ ! -s "$address_book" ]; then
+        echo "The address book is empty."
+    else
+        echo "----- Address Book -----"
+        cat "$address_book"
+        echo "------------------------"
+    fi
+}
+
+# Function to insert a record
+insert_record() {
+    echo "Enter Name:"
+    read name
+    echo "Enter Address:"
+    read address
+    echo "Enter Phone Number:"
+    read phone
+    echo "Enter Email:"
+    read email
+    echo "$name, $address, $phone, $email" >> "$address_book"
+    echo "Record added successfully."
+}
+
+# Function to delete a record
+delete_record() {
+    echo "Enter the name of the person to delete:"
+    read name
+    grep -v "^$name," "$address_book" > temp.txt && mv temp.txt "$address_book"
+    echo "Record deleted if it existed."
+}
+
+# Function to modify a record
+modify_record() {
+    echo "Enter the name of the person to modify:"
+    read name
+    if grep -q "^$name," "$address_book"; then
+        echo "Enter new Address:"
+        read address
+        echo "Enter new Phone Number:"
+        read phone
+        echo "Enter new Email:"
+        read email
+        grep -v "^$name," "$address_book" > temp.txt
+        echo "$name, $address, $phone, $email" >> temp.txt
+        mv temp.txt "$address_book"
+        echo "Record modified successfully."
+    else
+        echo "No record found with that name."
+    fi
+}
+
+# Main menu
+while true; do
+    echo "----- Address Book Menu -----"
+    echo "a) Create Address Book"
+    echo "b) View Address Book"
+    echo "c) Insert a Record"
+    echo "d) Delete a Record"
+    echo "e) Modify a Record"
+    echo "f) Exit"
+    echo "Enter your choice:"
+    read choice
+
+    case $choice in
+        a) create_address_book ;;
+        b) view_address_book ;;
+        c) insert_record ;;
+        d) delete_record ;;
+        e) modify_record ;;
+        f) echo "Exiting..."; break ;;
+        *) echo "Invalid choice. Please select a valid option." ;;
+    esac
